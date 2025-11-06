@@ -7,6 +7,16 @@
     <title>Celke</title>
 </head>
 <body>
+
+    <a href="{{ route('user.create')}}">Cadastrar</a><br>
+
     <h2>Listar Usuários</h2>
+
+    @if (session('success'))
+        <p>
+            {{ session('success')}}
+        </p>
+    @endif
+
 </body>
 </html>
