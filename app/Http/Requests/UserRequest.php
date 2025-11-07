@@ -3,40 +3,43 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UserRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
+        // Se estiver atualizando, pega o ID do usuário
+        $userId = $this->route('user') ? $this->route('user')->id : null;
+
         return [
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6',
+            'name' => ['required', 'string', 'max:255'],
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users', 'email')->ignore($userId),
+            ],
+            // Senha obrigatória apenas no cadastro (POST)
+            'password' => $this->isMethod('POST')
+                ? ['required', 'min:6']
+                : ['nullable', 'min:6'],
         ];
     }
 
-    public function messages()
+    public function messages(): array
     {
-        return[
-            'name.required' => 'Campo nome é obrigatótio!',
-            'email.required' => 'Campo email é obrigatório!',
-            'email.email' => 'Necessário enviar e-mail válido!',
+        return [
+            'name.required' => 'Campo nome é obrigatório!',
+            'email.required' => 'Campo e-mail é obrigatório!',
+            'email.email' => 'Necessário enviar um e-mail válido!',
+            'email.unique' => 'Este e-mail já está sendo utilizado!',
             'password.required' => 'Campo senha é obrigatório!',
-            'password.min' => 'senha com no mínimo :min caracteres!',
-            
+            'password.min' => 'A senha deve ter no mínimo :min caracteres!',
         ];
     }
 }
