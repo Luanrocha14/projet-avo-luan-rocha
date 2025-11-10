@@ -26,8 +26,11 @@ class UserRequest extends FormRequest
             ],
             // Senha obrigatória apenas no cadastro (POST)
             'password' => $this->isMethod('POST')
-                ? ['required', 'min:6']
-                : ['nullable', 'min:6'],
+                ? ['required', 'min:6', 'confirmed']
+                : ['nullable', 'min:6', 'confirmed'],
+
+            // Campo de confirmação da senha (precisa existir no formulário)
+            'password_confirmation' => ['nullable', 'min:6'],
         ];
     }
 
@@ -40,6 +43,7 @@ class UserRequest extends FormRequest
             'email.unique' => 'Este e-mail já está sendo utilizado!',
             'password.required' => 'Campo senha é obrigatório!',
             'password.min' => 'A senha deve ter no mínimo :min caracteres!',
+            'password.confirmed' => 'A confirmação de senha não confere!',
         ];
     }
 }

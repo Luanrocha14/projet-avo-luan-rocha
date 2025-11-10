@@ -1,28 +1,81 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+@extends('layouts.admin')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Celke</title>
-</head>
+@section('content')
+<div class="card mt-4 mb-4 border-light shadow">
 
-<body>
+    <div class="card-header hstack gap-2">
+        <span>Visualizar Usuário</span>
 
-    <a href="{{ route('user.index') }}">Lista</a><br>
-    <a href="{{ route('user.edit', ['user' => $user->id]) }}">Editar</a><br>
+        <span class="ms-auto d-sm-flex flex-row">
 
+            <a href="{{ route('user.index') }}" class="btn btn-info btn-sm me-1">Listar</a>
+            <a href="{{ route('user.edit', ['user' => $user->id]) }}" class="btn btn-warning btn-sm me-1">Editar</a>
 
-    <h2>Visualizar Usuário</h2>
+            {{-- Botão que abre o modal --}}
+            <button type="button" 
+                class="btn btn-danger btn-sm me-1"
+                data-bs-toggle="modal"
+                data-bs-target="#deleteModal"
+                data-bs-action="{{ route('user.destroy', ['user' => $user->id]) }}">
+                Apagar
+            </button>
+        </span>
+    </div>
 
-    ID: {{ $user->id }}<br>
-    Nome: {{ $user->name }}<><br>
-        E-mail: {{ $user->email }}<br>
-        Cadastrado: {{ \Carbon\Carbon::parse($user->created_at)->format('d/m/Y H:i:s') }}<br>
-        Editado: {{ \Carbon\Carbon::parse($user->updated_at)->format('d/m/Y H:i:s') }}<br>
+    <div class="card-body">
+        <x-alert />
 
+        <dl class="row">
+            <dt class="col-sm-3">ID</dt>
+            <dd class="col-sm-9">{{ $user->id }}</dd>
 
-</body>
+            <dt class="col-sm-3">Nome</dt>
+            <dd class="col-sm-9">{{ $user->name }}</dd>
 
-</html>
+            <dt class="col-sm-3">E-mail</dt>
+            <dd class="col-sm-9">{{ $user->email }}</dd>
+
+            <dt class="col-sm-3">Cadastrado</dt>
+            <dd class="col-sm-9">{{ \Carbon\Carbon::parse($user->created_at)->format('d/m/Y H:i:s') }}</dd>
+
+            <dt class="col-sm-3">Editado</dt>
+            <dd class="col-sm-9">{{ \Carbon\Carbon::parse($user->updated_at)->format('d/m/Y H:i:s') }}</dd>
+        </dl>
+    </div>
+</div>
+
+{{-- Modal de confirmação de exclusão --}}
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="deleteModalLabel">Confirmar exclusão</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        Tem certeza que deseja <strong>apagar este usuário</strong>? Essa ação não pode ser desfeita.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <form method="POST" id="deleteForm">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-danger">Apagar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{-- Script para atualizar a ação do form no modal --}}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const deleteModal = document.getElementById('deleteModal');
+    deleteModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const action = button.getAttribute('data-bs-action');
+        document.getElementById('deleteForm').setAttribute('action', action);
+    });
+});
+</script>
+@endsection

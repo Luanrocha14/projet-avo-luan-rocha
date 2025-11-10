@@ -1,0 +1,38 @@
+.bg-petroleo {
+    background-color: #215169 !important;
+    color: #fff !important;
+}
+
+.bg-petroleo a {
+    color: #dbe9f0 !important;
+}
+
+.bg-petroleo a:hover {
+    color: #ffffff !important;
+    background-color: #1b4357 !important;
+}
+
+.btn-toggle {
+    color: #fff !important;
+}
+
+.btn-toggle:hover {
+    background-color: #1b4357 !important;
+}
+
+.link-body-emphasis {
+    color: #fff !important;
+}
+
+.dropdown-menu {
+    background-color: #215169 !important;
+    color: #fff !important;
+}
+
+.dropdown-menu a.dropdown-item {
+    color: #fff !important;
+}
+
+.dropdown-menu a.dropdown-item:hover {
+    background-color: #1b4357 !important;
+}
