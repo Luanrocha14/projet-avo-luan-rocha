@@ -1,10 +1,55 @@
 @extends('layouts.admin')
 
 @section('content')
+
+@php
+    use Carbon\Carbon;
+    use App\Models\Lembrete;
+
+    $totalPendentes = Lembrete::where('pago', false)->count();
+    $pagos = Lembrete::where('pago', true)->get();
+
+    $pagosEmDia = $pagos->filter(fn($l) => Carbon::parse($l->data_pagamento)->lte(Carbon::parse($l->data_vencimento)))->count();
+    $pagosAtraso = $pagos->filter(fn($l) => Carbon::parse($l->data_pagamento)->gt(Carbon::parse($l->data_vencimento)))->count();
+@endphp
+
+{{-- 📊 Painel de Estatísticas --}}
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-center shadow-sm border-0">
+            <div class="card-body">
+                <i class="bi bi-exclamation-circle text-danger fs-3 mb-2"></i>
+                <h6 class="text-muted">Pendentes</h6>
+                <h4 class="fw-bold text-danger">{{ $totalPendentes }}</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-center shadow-sm border-0">
+            <div class="card-body">
+                <i class="bi bi-check-circle text-primary fs-3 mb-2"></i>
+                <h6 class="text-muted">Pagos em Dia</h6>
+                <h4 class="fw-bold text-primary">{{ $pagosEmDia }}</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-center shadow-sm border-0">
+            <div class="card-body">
+                <i class="bi bi-clock-history text-warning fs-3 mb-2"></i>
+                <h6 class="text-muted">Pagos com Atraso</h6>
+                <h4 class="fw-bold text-warning">{{ $pagosAtraso }}</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- 💰 Listagem de Lembretes Pendentes --}}
 <div class="card mb-4 border-light shadow">
     <div class="card mt-4 header hstack gap-2">
-        <span><i class="bi bi-wallet2 me-1"></i> Listar Lembretes de Dívidas</span>
-
+        <span><i class="bi bi-wallet2 me-1"></i> Lembretes de Dívidas Pendentes</span>
         <span class="ms-auto">
             <a href="{{ route('lembretes.create') }}" class="btn btn-success btn-sm">
                 <i class="bi bi-plus-circle me-1"></i> Novo Lembrete
@@ -15,7 +60,6 @@
     <div class="card-body">
         <x-alert />
 
-        {{-- 🧾 Tabela de Lembretes PENDENTES --}}
         <table class="table table-hover align-middle">
             <thead>
                 <tr>
@@ -36,11 +80,11 @@
                     <tr>
                         <td>{{ $lembrete->titulo }}</td>
                         <td>R$ {{ number_format($lembrete->valor, 2, ',', '.') }}</td>
-                        <td>{{ \Carbon\Carbon::parse($lembrete->data_vencimento)->format('d/m/Y') }}</td>
+                        <td>{{ Carbon::parse($lembrete->data_vencimento)->format('d/m/Y') }}</td>
                         <td><span class="badge bg-danger">Pendente</span></td>
 
                         <td class="text-center">
-                            {{-- 💰 Botão modal de pagamento --}}
+                            {{-- 💳 Botão Pagar --}}
                             <button type="button"
                                     class="btn btn-success btn-sm"
                                     data-bs-toggle="modal"
@@ -65,7 +109,7 @@
                         </td>
                     </tr>
 
-                    {{-- 💳 Modal de pagamento --}}
+                    {{-- 💰 Modal de Pagamento --}}
                     <div class="modal fade" id="modalPagar{{ $lembrete->id }}" tabindex="-1" aria-labelledby="modalLabel{{ $lembrete->id }}" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content border-0 shadow-lg">
@@ -76,9 +120,9 @@
                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <p>Tem certeza que deseja marcar a conta <strong>{{ $lembrete->titulo }}</strong> como paga?</p>
-                                    <p class="mb-0">Valor: <strong>R$ {{ number_format($lembrete->valor, 2, ',', '.') }}</strong></p>
-                                    <p>Vencimento: <strong>{{ \Carbon\Carbon::parse($lembrete->data_vencimento)->format('d/m/Y') }}</strong></p>
+                                    <p>Tem certeza que deseja marcar <strong>{{ $lembrete->titulo }}</strong> como pago?</p>
+                                    <p>Valor: <strong>R$ {{ number_format($lembrete->valor, 2, ',', '.') }}</strong></p>
+                                    <p>Vencimento: <strong>{{ Carbon::parse($lembrete->data_vencimento)->format('d/m/Y') }}</strong></p>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -93,18 +137,16 @@
                             </div>
                         </div>
                     </div>
-
                 @empty
-                    <tr><td colspan="5" class="text-center text-muted">Nenhum lembrete pendente encontrado.</td></tr>
+                    <tr><td colspan="5" class="text-center text-muted">Nenhum lembrete pendente.</td></tr>
                 @endforelse
             </tbody>
         </table>
-
         {{ $lembretes->links() }}
     </div>
 </div>
 
-{{-- 🕘 Histórico de contas pagas --}}
+{{-- 🕘 Histórico de Contas Pagas --}}
 <div class="card mt-4 border-light shadow">
     <div class="card-header bg-light">
         <h5 class="mb-0"><i class="bi bi-clock-history me-1"></i> Histórico de Contas Pagas</h5>
@@ -116,34 +158,28 @@
                 <tr>
                     <th>Título</th>
                     <th>Valor</th>
-                    <th>Data de Vencimento</th>
-                    <th>Data de Pagamento</th>
+                    <th>Vencimento</th>
+                    <th>Pagamento</th>
                     <th>Status</th>
                     <th>Situação</th>
                     <th class="text-center">Ações</th>
                 </tr>
             </thead>
             <tbody>
-                @php
-                    $pagos = \App\Models\Lembrete::where('pago', true)
-                                ->orderByDesc('data_pagamento')
-                                ->get();
-                @endphp
-
-                @forelse ($pagos as $pago)
+                @foreach ($pagos as $pago)
                     @php
-                        $vencimento = \Carbon\Carbon::parse($pago->data_vencimento);
-                        $pagamento = \Carbon\Carbon::parse($pago->data_pagamento);
-                        $situacao = $pagamento->lte($vencimento) ? 'Pago em dia' : 'Paga com atraso';
+                        $venc = Carbon::parse($pago->data_vencimento);
+                        $pag = Carbon::parse($pago->data_pagamento);
+                        $situacao = $pag->lte($venc) ? 'Pago em dia' : 'Pago com atraso';
                     @endphp
                     <tr>
                         <td>{{ $pago->titulo }}</td>
                         <td>R$ {{ number_format($pago->valor, 2, ',', '.') }}</td>
-                        <td>{{ $vencimento->format('d/m/Y') }}</td>
-                        <td>{{ $pagamento->format('d/m/Y') }}</td>
+                        <td>{{ $venc->format('d/m/Y') }}</td>
+                        <td>{{ $pag->format('d/m/Y') }}</td>
                         <td><span class="badge bg-success">Pago</span></td>
                         <td>
-                            @if ($situacao === 'Pago em dia')
+                            @if($situacao === 'Pago em dia')
                                 <span class="badge bg-primary">{{ $situacao }}</span>
                             @else
                                 <span class="badge bg-warning text-dark">{{ $situacao }}</span>
@@ -154,17 +190,19 @@
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm"
-                                    onclick="return confirm('Deseja remover este item do histórico?')">
-                                    <i class="bi bi-trash"></i> 
+                                    onclick="return confirm('Remover este item do histórico?')">
+                                    <i class="bi bi-trash"></i>
                                 </button>
                             </form>
                         </td>
                     </tr>
-                @empty
+                @endforeach
+                @if($pagos->isEmpty())
                     <tr><td colspan="7" class="text-center text-muted">Nenhuma conta paga ainda.</td></tr>
-                @endforelse
+                @endif
             </tbody>
         </table>
     </div>
 </div>
+
 @endsection
