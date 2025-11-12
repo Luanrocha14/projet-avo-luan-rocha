@@ -29,7 +29,6 @@
 
             <tbody>
                 @php
-                    // Somente lembretes ainda não pagos
                     $pendentes = $lembretes->where('pago', false);
                 @endphp
 
@@ -41,7 +40,7 @@
                         <td><span class="badge bg-danger">Pendente</span></td>
 
                         <td class="text-center">
-                            {{-- 💰 Botão para abrir modal de pagamento --}}
+                            {{-- 💰 Botão modal de pagamento --}}
                             <button type="button"
                                     class="btn btn-success btn-sm"
                                     data-bs-toggle="modal"
@@ -101,7 +100,6 @@
             </tbody>
         </table>
 
-        {{-- Paginação --}}
         {{ $lembretes->links() }}
     </div>
 </div>
@@ -118,41 +116,52 @@
                 <tr>
                     <th>Título</th>
                     <th>Valor</th>
+                    <th>Data de Vencimento</th>
                     <th>Data de Pagamento</th>
+                    <th>Status</th>
+                    <th>Situação</th>
                     <th class="text-center">Ações</th>
                 </tr>
             </thead>
             <tbody>
                 @php
-                    // Lembretes já pagos
                     $pagos = \App\Models\Lembrete::where('pago', true)
                                 ->orderByDesc('data_pagamento')
                                 ->get();
                 @endphp
 
                 @forelse ($pagos as $pago)
+                    @php
+                        $vencimento = \Carbon\Carbon::parse($pago->data_vencimento);
+                        $pagamento = \Carbon\Carbon::parse($pago->data_pagamento);
+                        $situacao = $pagamento->lte($vencimento) ? 'Pago em dia' : 'Paga com atraso';
+                    @endphp
                     <tr>
                         <td>{{ $pago->titulo }}</td>
                         <td>R$ {{ number_format($pago->valor, 2, ',', '.') }}</td>
+                        <td>{{ $vencimento->format('d/m/Y') }}</td>
+                        <td>{{ $pagamento->format('d/m/Y') }}</td>
+                        <td><span class="badge bg-success">Pago</span></td>
                         <td>
-                            {{ $pago->data_pagamento
-                                ? \Carbon\Carbon::parse($pago->data_pagamento)->format('d/m/Y')
-                                : '-' }}
+                            @if ($situacao === 'Pago em dia')
+                                <span class="badge bg-primary">{{ $situacao }}</span>
+                            @else
+                                <span class="badge bg-warning text-dark">{{ $situacao }}</span>
+                            @endif
                         </td>
                         <td class="text-center">
-                            {{-- ❌ Apagar do histórico --}}
                             <form action="{{ route('lembretes.destroy', $pago->id) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm"
                                     onclick="return confirm('Deseja remover este item do histórico?')">
-                                    <i class="bi bi-trash"></i> Apagar
+                                    <i class="bi bi-trash"></i> 
                                 </button>
                             </form>
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="4" class="text-center text-muted">Nenhuma conta paga ainda.</td></tr>
+                    <tr><td colspan="7" class="text-center text-muted">Nenhuma conta paga ainda.</td></tr>
                 @endforelse
             </tbody>
         </table>
