@@ -49,21 +49,20 @@ class UserController extends Controller
     {
         $validated = $request->validated();
 
-        // ⚙️ Atualiza somente os campos necessários
         $userData = [
             'name' => $validated['name'],
             'email' => $validated['email'],
         ];
 
-        // ⚙️ Atualiza a senha apenas se o campo foi preenchido
         if (!empty($validated['password'])) {
             $userData['password'] = Hash::make($validated['password']);
         }
 
         $user->update($userData);
 
+        // ✅ Agora volta para a listagem principal após editar
         return redirect()
-            ->route('user.show', ['user' => $user->id])
+            ->route('user.index')
             ->with('success', 'Usuário atualizado com sucesso!');
     }
 

@@ -43,7 +43,7 @@
                     <div class="collapse" id="home-collapse">
                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                             <li><a href="{{ route('user.index') }}" class="d-inline-flex text-decoration-none rounded">Usuários</a></li>
-                            <li><a href="#" class="d-inline-flex text-decoration-none rounded">Dashboard</a></li>
+                            <li><a href="{{ route('lembretes.index')}}" class="d-inline-flex text-decoration-none rounded">lembretes</a></li>
                             <li><a href="#" class="d-inline-flex text-decoration-none rounded">Configurações</a></li>
                         </ul>
                     </div>
