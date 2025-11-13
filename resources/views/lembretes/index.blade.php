@@ -98,14 +98,12 @@
                             </a>
 
                             {{-- 🗑️ Excluir --}}
-                            <form action="{{ route('lembretes.destroy', $lembrete->id) }}" method="POST" class="d-inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm"
-                                    onclick="return confirm('Tem certeza que deseja excluir este lembrete?')">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </form>
+                            <button type="button"
+                                    class="btn btn-danger btn-sm"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalExcluir{{ $lembrete->id }}">
+                                <i class="bi bi-trash"></i>
+                            </button>
                         </td>
                     </tr>
 
@@ -131,6 +129,34 @@
                                         @method('PUT')
                                         <button type="submit" class="btn btn-success">
                                             <i class="bi bi-check2-circle me-1"></i> Confirmar Pagamento
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- 🗑️ Modal de Exclusão --}}
+                    <div class="modal fade" id="modalExcluir{{ $lembrete->id }}" tabindex="-1" aria-labelledby="modalExcluirLabel{{ $lembrete->id }}" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content border-0 shadow-lg">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title" id="modalExcluirLabel{{ $lembrete->id }}">
+                                        <i class="bi bi-trash3 me-1"></i> Confirmar Exclusão
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Deseja realmente excluir o lembrete <strong>{{ $lembrete->titulo }}</strong>?</p>
+                                    <p>Esta ação não pode ser desfeita.</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <form action="{{ route('lembretes.destroy', $lembrete->id) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="bi bi-trash3-fill me-1"></i> Excluir
                                         </button>
                                     </form>
                                 </div>
