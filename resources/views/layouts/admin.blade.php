@@ -57,7 +57,7 @@
                     </button>
                     <div class="collapse" id="orders-collapse">
                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                            <li><a href="#" class="d-inline-flex text-decoration-none rounded">Novos</a></li>
+                            <li><a href="{{ route('produtos.index') }}" class="d-inline-flex text-decoration-none rounded">Novos</a></li>
                             <li><a href="#" class="d-inline-flex text-decoration-none rounded">Finalizados</a></li>
                         </ul>
                     </div>
@@ -71,7 +71,7 @@
                     </button>
                     <div class="collapse" id="products-collapse">
                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                            <li><a href="#" class="d-inline-flex text-decoration-none rounded">Cadastrar</a></li>
+                            <li><a href="{{ route('produtos.album') }}" class="d-inline-flex text-decoration-none rounded">Catalogo</a></li>
                             <li><a href="#" class="d-inline-flex text-decoration-none rounded">Listar</a></li>
                         </ul>
                     </div>
