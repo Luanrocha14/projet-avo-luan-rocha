@@ -17,4 +17,10 @@ class Produto extends Model
         'lucro',
         'imagem',
     ];
+
+    // ✔ RELAÇÃO CORRETA (informando o campo produto_id)
+    public function imagens()
+    {
+    return $this->hasMany(ProdutoImagem::class);
+    }
 }

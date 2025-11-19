@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LembreteController;
 use App\Http\Controllers\ProdutoController;
+use App\Http\Controllers\CarrinhoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,24 +26,24 @@ Route::delete('/destroy-user/{user}', [UserController::class, 'destroy'])->name(
 |--------------------------------------------------------------------------
 */
 
-// Listar todos os lembretes
+// Listar todos
 Route::get('/lembretes', [LembreteController::class, 'index'])->name('lembretes.index');
 
-// Criar novo lembrete
+// Criar
 Route::get('/lembretes/create', [LembreteController::class, 'create'])->name('lembretes.create');
 Route::post('/lembretes', [LembreteController::class, 'store'])->name('lembretes.store');
 
-// Editar lembrete
+// Editar
 Route::get('/lembretes/{lembrete}/edit', [LembreteController::class, 'edit'])->name('lembretes.edit');
 Route::put('/lembretes/{lembrete}', [LembreteController::class, 'update'])->name('lembretes.update');
 
-// Excluir lembrete
+// Excluir
 Route::delete('/lembretes/{lembrete}', [LembreteController::class, 'destroy'])->name('lembretes.destroy');
 
-// Marcar lembrete como pago
+// Pagar
 Route::put('/lembretes/{id}/pagar', [LembreteController::class, 'pagar'])->name('lembretes.pagar');
 
-// Página de histórico de pagos
+// Histórico
 Route::get('/pagos', [LembreteController::class, 'pagos'])->name('lembretes.pagos');
 
 /*
@@ -51,26 +52,35 @@ Route::get('/pagos', [LembreteController::class, 'pagos'])->name('lembretes.pago
 |--------------------------------------------------------------------------
 */
 
-// Página principal de produtos
+// Listagem principal
 Route::get('/produtos', [ProdutoController::class, 'index'])->name('produtos.index');
 
-// Formulário de criação
+// Criar
 Route::get('/produtos/create', [ProdutoController::class, 'create'])->name('produtos.create');
 
-// Salvar novo produto
+// Salvar
 Route::post('/produtos', [ProdutoController::class, 'store'])->name('produtos.store');
 
-// ⚠️ Colocada antes da rota dinâmica
+// *** Catálogo em grade (álbum) – importante ficar ANTES da rota dinâmica ***
 Route::get('/produtos/album', [ProdutoController::class, 'album'])->name('produtos.album');
 
-// Exibir produto específico
+// Visualizar item
 Route::get('/produtos/{produto}', [ProdutoController::class, 'show'])->name('produtos.show');
 
-// Formulário de edição
+// Editar
 Route::get('/produtos/{produto}/edit', [ProdutoController::class, 'edit'])->name('produtos.edit');
 
-// Atualizar produto
+// Atualizar
 Route::put('/produtos/{produto}', [ProdutoController::class, 'update'])->name('produtos.update');
 
-// Excluir produto
+// Excluir
 Route::delete('/produtos/{produto}', [ProdutoController::class, 'destroy'])->name('produtos.destroy');
+
+/*
+|--------------------------------------------------------------------------
+| Rotas do Carrinho
+|--------------------------------------------------------------------------
+*/
+Route::get('/carrinho', [CarrinhoController::class, 'index'])->name('carrinho.index');
+Route::get('/carrinho/adicionar/{id}', [CarrinhoController::class, 'adicionar'])->name('carrinho.adicionar');
+Route::get('/carrinho/remover/{id}', [CarrinhoController::class, 'remover'])->name('carrinho.remover');
