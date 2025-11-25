@@ -21,8 +21,13 @@
 
             {{-- 📸 Imagem grande --}}
             <div class="col-md-5">
-                @if ($produto->imagem)
-                    <img src="{{ asset('storage/' . $produto->imagem) }}"
+
+                @php
+                    $imagemPrincipal = $produto->imagens->first();
+                @endphp
+
+                @if ($imagemPrincipal)
+                    <img src="{{ asset('storage/' . $imagemPrincipal->caminho) }}"
                         class="img-fluid rounded shadow-sm"
                         style="width: 100%; height: 350px; object-fit: cover;">
                 @else
@@ -31,12 +36,12 @@
                         <span class="text-muted">Sem imagem</span>
                     </div>
                 @endif
+
             </div>
 
             {{-- 📄 Informações --}}
             <div class="col-md-7">
 
-                {{-- Título --}}
                 <h2 class="fw-bold mb-2">{{ $produto->nome }}</h2>
 
                 {{-- 💰 Informações de preço --}}
@@ -84,7 +89,6 @@
                 {{-- Botões --}}
                 <div class="mt-4 d-flex gap-3">
 
-                    {{-- 🛒 Adicionar ao carrinho --}}
                     <a href="{{ route('carrinho.adicionar', $produto->id) }}" 
                         class="btn btn-success px-4">
                         <i class="bi bi-cart-plus me-1"></i> Adicionar ao Carrinho

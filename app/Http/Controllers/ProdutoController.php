@@ -3,18 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Produto;
-use App\Models\ProdutoImagem; // 👈 IMPORTANTE
+use App\Models\ProdutoImagem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class ProdutoController extends Controller
 {
-   public function index()
-{
-    $produtos = Produto::with('imagens')->orderBy('id', 'DESC')->paginate(10);
-
-    return view('produtos.index', compact('produtos'));
-}
+    public function index()
+    {
+        $produtos = Produto::with('imagens')->orderBy('id', 'DESC')->paginate(10);
+        return view('produtos.index', compact('produtos'));
+    }
 
     public function create()
     {
@@ -23,19 +22,16 @@ class ProdutoController extends Controller
 
     public function store(Request $request)
     {
-        // 🔹 Validação
         $request->validate([
             'nome' => 'required|string|max:255',
             'descricao' => 'nullable|string',
             'preco_custo' => 'required|numeric|min:0',
             'preco_venda' => 'required|numeric|min:0',
-            'imagens.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:4096',
+            'imagens.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
         ]);
 
-        // 🔹 Calcula lucro
         $lucro = $request->preco_venda - $request->preco_custo;
 
-        // 🔹 Cria o produto
         $produto = Produto::create([
             'nome' => $request->nome,
             'descricao' => $request->descricao,
@@ -44,28 +40,25 @@ class ProdutoController extends Controller
             'lucro' => $lucro,
         ]);
 
-        // 🔹 Salva múltiplas imagens (se houver)
         if ($request->hasFile('imagens')) {
-            foreach ($request->file('imagens') as $imagem) {
-                $caminho = $imagem->store('produtos', 'public');
+            foreach ($request->file('imagens') as $img) {
+                $caminho = $img->store('produtos', 'public');
 
                 ProdutoImagem::create([
                     'produto_id' => $produto->id,
                     'caminho' => $caminho,
+                    'carousel' => false,
                 ]);
             }
         }
 
-        return redirect()
-            ->route('produtos.index')
+        return redirect()->route('produtos.index')
             ->with('success', '✅ Produto criado com sucesso!');
     }
 
     public function show(Produto $produto)
     {
-        // 🔹 Exibe o produto com suas imagens
         $produto->load('imagens');
-
         return view('produtos.show', compact('produto'));
     }
 
@@ -82,10 +75,11 @@ class ProdutoController extends Controller
             'descricao' => 'nullable|string',
             'preco_custo' => 'required|numeric|min:0',
             'preco_venda' => 'required|numeric|min:0',
-            'imagens.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:4096',
+            'imagens.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
+            'apagar_imagens.*' => 'nullable|integer|exists:produto_imagens,id',
+            'carousel_imagens.*' => 'nullable|integer|exists:produto_imagens,id',
         ]);
 
-        // 🔹 Atualiza informações do produto
         $lucro = $request->preco_venda - $request->preco_custo;
 
         $produto->update([
@@ -96,26 +90,55 @@ class ProdutoController extends Controller
             'lucro' => $lucro,
         ]);
 
-        // 🔹 Adiciona novas imagens
+        // REMOVER IMAGENS MARCADAS
+        if ($request->filled('apagar_imagens')) {
+            foreach ($request->apagar_imagens as $idImg) {
+                $img = ProdutoImagem::find($idImg);
+                if ($img && $img->produto_id === $produto->id) {
+                    if (Storage::disk('public')->exists($img->caminho)) {
+                        Storage::disk('public')->delete($img->caminho);
+                    }
+                    $img->delete();
+                }
+            }
+        }
+
+        // RESETAR campo carousel para todas as imagens deste produto
+        foreach ($produto->imagens as $img) {
+            $img->carousel = false;
+            $img->save();
+        }
+
+        // ATIVAR CARROSSEL NAS IMAGENS SELECIONADAS
+        if ($request->filled('carousel_imagens')) {
+            foreach ($request->carousel_imagens as $idImg) {
+                $img = ProdutoImagem::where('produto_id', $produto->id)->where('id', $idImg)->first();
+                if ($img) {
+                    $img->carousel = true;
+                    $img->save();
+                }
+            }
+        }
+
+        // ADICIONAR NOVAS IMAGENS
         if ($request->hasFile('imagens')) {
-            foreach ($request->file('imagens') as $imagem) {
-                $caminho = $imagem->store('produtos', 'public');
+            foreach ($request->file('imagens') as $imgFile) {
+                $caminho = $imgFile->store('produtos', 'public');
 
                 ProdutoImagem::create([
                     'produto_id' => $produto->id,
                     'caminho' => $caminho,
+                    'carousel' => false,
                 ]);
             }
         }
 
-        return redirect()
-            ->route('produtos.index')
+        return redirect()->route('produtos.index')
             ->with('success', '✅ Produto atualizado com sucesso!');
     }
 
     public function destroy(Produto $produto)
     {
-        // 🔹 Deleta imagens do produto
         foreach ($produto->imagens as $img) {
             if (Storage::disk('public')->exists($img->caminho)) {
                 Storage::disk('public')->delete($img->caminho);
@@ -123,19 +146,15 @@ class ProdutoController extends Controller
             $img->delete();
         }
 
-        // 🔹 Deleta o produto
         $produto->delete();
 
-        return redirect()
-            ->route('produtos.index')
+        return redirect()->route('produtos.index')
             ->with('success', '🗑️ Produto removido com sucesso!');
     }
 
     public function album()
     {
-        // 🔹 Lista com paginação
-        $produtos = Produto::with('imagens')->orderByDesc('id')->paginate(6);
-
+        $produtos = Produto::with('imagens')->orderByDesc('id')->paginate(12);
         return view('produtos.album', compact('produtos'));
     }
 }

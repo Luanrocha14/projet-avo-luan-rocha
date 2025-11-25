@@ -37,14 +37,31 @@
                 @php $totalGeral = 0; @endphp
 
                 @foreach($carrinho as $item)
-                    @php 
+
+                    @php
+                        // 1) Se o carrinho já tem imagem
+                        if ($item['imagem']) {
+                            $imgUrl = asset('storage/' . $item['imagem']);
+                        } else {
+                            // 2) Buscar no banco a primeira imagem desse produto
+                            $imgDB = \App\Models\ProdutoImagem::where('produto_id', $item['id'])->first();
+
+                            if ($imgDB) {
+                                $imgUrl = asset('storage/' . $imgDB->caminho);
+                            } else {
+                                // 3) Sem imagem → placeholder
+                                $imgUrl = asset('images/sem-imagem.png');
+                            }
+                        }
+
                         $total = $item['preco'] * $item['quantidade'];
                         $totalGeral += $total;
                     @endphp
 
                     <tr>
                         <td>
-                            <img src="/storage/{{ $item['imagem'] }}" class="cart-product-img">
+                            <img src="{{ $imgUrl }}"
+                                 style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
                         </td>
 
                         <td>{{ $item['nome'] }}</td>
@@ -56,8 +73,8 @@
                         <td>R$ {{ number_format($total, 2, ',', '.') }}</td>
 
                         <td>
-                            <a href="{{ route('carrinho.remover', $item['id']) }}" 
-                               class="btn btn-danger btn-sm btn-remove">
+                            <a href="{{ route('carrinho.remover', $item['id']) }}"
+                                class="btn btn-danger btn-sm btn-remove">
                                 Remover
                             </a>
                         </td>

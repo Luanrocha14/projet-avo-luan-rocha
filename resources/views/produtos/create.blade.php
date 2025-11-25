@@ -17,8 +17,9 @@
             </div>
 
             <div class="col-md-6">
-                <label class="form-label">Imagem</label>
-                <input type="file" name="imagem" class="form-control">
+                <label class="form-label">Imagens</label>
+                <input type="file" name="imagens[]" multiple class="form-control">
+                <small class="text-muted">Você pode selecionar várias imagens. Tipos: jpeg,png,jpg,gif,webp.</small>
             </div>
 
             <div class="col-md-6">

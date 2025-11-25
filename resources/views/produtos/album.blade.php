@@ -11,8 +11,45 @@
     </div>
 
     <div class="card-body">
-
         <x-alert />
+
+        {{-- ============================= --}}
+        {{--   CARROSSEL PRINCIPAL        --}}
+        {{-- ============================= --}}
+        @php
+            $imagens_carousel = $produtos->getCollection()
+                ->flatMap(function ($produto) {
+                    return $produto->imagens;
+                })
+                ->where('carousel', true);
+        @endphp
+
+        @if ($imagens_carousel->count() > 0)
+        <div id="carouselPrincipal" class="carousel slide mb-4" data-bs-ride="carousel">
+            <div class="carousel-inner">
+
+                @foreach ($imagens_carousel as $i => $img)
+                    <div class="carousel-item {{ $i === 0 ? 'active' : '' }}">
+                        <img src="{{ asset('storage/' . $img->caminho) }}"
+                             class="d-block w-100 rounded"
+                             style="height: 450px; object-fit: cover;">
+                    </div>
+                @endforeach
+
+            </div>
+
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselPrincipal" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselPrincipal" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
+        </div>
+        @endif
+
+        {{-- ============================= --}}
+        {{--   GRID DE PRODUTOS           --}}
+        {{-- ============================= --}}
 
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
 
@@ -20,9 +57,8 @@
                 <div class="col">
                     <div class="card shadow-sm border-0 h-100 rounded-3 product-card">
 
-                        {{-- MULTIPLAS IMAGENS → CARROSSEL SIMPLES (SEM BOTÕES) --}}
+                        {{-- Múltiplas Imagens → Carrossel --}}
                         @if ($produto->imagens->count() > 1)
-
                             <div id="carousel-produto-{{ $produto->id }}"
                                  class="carousel slide rounded-top"
                                  data-bs-ride="carousel">
@@ -41,14 +77,14 @@
 
                             </div>
 
-                        {{-- UMA IMAGEM --}}
+                        {{-- Uma imagem --}}
                         @elseif ($produto->imagens->count() == 1)
 
                             <img src="{{ asset('storage/' . $produto->imagens->first()->caminho) }}"
                                  class="card-img-top rounded-top"
                                  style="height: 250px; object-fit: cover;">
 
-                        {{-- SEM IMAGENS --}}
+                        {{-- Sem imagem --}}
                         @else
                             <div class="d-flex align-items-center justify-content-center bg-light rounded-top"
                                  style="height: 250px;">
@@ -57,7 +93,9 @@
                         @endif
 
 
-                        {{-- INFORMAÇÕES DO PRODUTO --}}
+                        {{-- ============================= --}}
+                        {{--  INFORMAÇÕES DO PRODUTO      --}}
+                        {{-- ============================= --}}
                         <div class="card-body d-flex flex-column">
 
                             <h5 class="fw-bold mb-1">{{ $produto->nome }}</h5>
@@ -67,7 +105,6 @@
                             </p>
 
                             <div class="mt-auto">
-
                                 <hr>
 
                                 @php

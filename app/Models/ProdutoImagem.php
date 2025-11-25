@@ -9,22 +9,20 @@ class ProdutoImagem extends Model
 {
     use HasFactory;
 
-    // Nome da tabela
     protected $table = 'produto_imagens';
 
-    // Campos permitidos para preenchimento
     protected $fillable = [
         'produto_id',
         'caminho',
         'carousel',
     ];
 
-    /**
-     * Relação com Produto
-     * Cada imagem pertence a um produto
-     */
+    protected $casts = [
+        'carousel' => 'boolean',
+    ];
+
     public function produto()
     {
-        return $this->belongsTo(Produto::class);
+        return $this->belongsTo(Produto::class, 'produto_id');
     }
 }

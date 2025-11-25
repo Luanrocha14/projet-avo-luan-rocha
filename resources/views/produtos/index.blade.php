@@ -2,7 +2,7 @@
 
 @section('content')
 
-{{-- CARROSSEL DO PRODUTO --}}
+{{-- CARROSSEL DO PRODUTO (destaques) --}}
 @php
     $imagensCarousel = $produtos->pluck('imagens')->flatten()->where('carousel', true);
 @endphp
@@ -10,9 +10,7 @@
 @if ($imagensCarousel->count() > 0)
 <div id="carouselExampleSlidesOnly" class="carousel slide mb-4" data-bs-ride="carousel">
     <div class="carousel-inner">
-
         @php $primeira = true; @endphp
-
         @foreach ($imagensCarousel as $img)
             <div class="carousel-item @if($primeira) active @php $primeira = false; @endphp @endif">
                 <img src="{{ asset('storage/' . $img->caminho) }}"
@@ -21,14 +19,11 @@
                      alt="Imagem do produto">
             </div>
         @endforeach
-
     </div>
 </div>
 @endif
 
-
 <div class="card mt-4 border-light shadow">
-
     <div class="card-header bg-light d-flex justify-content-between align-items-center">
         <h5 class="mb-0">Listar Produtos</h5>
         <a href="{{ route('produtos.create') }}" class="btn btn-success btn-sm">Novo Produto</a>
@@ -50,8 +45,9 @@
                 @foreach ($produtos as $produto)
                 <tr>
                     <td>
-                        @if ($produto->imagem)
-                            <img src="{{ asset('storage/' . $produto->imagem) }}" class="img-thumbnail"
+                        @if ($produto->imagens->count() > 0)
+                            <img src="{{ asset('storage/' . $produto->imagens->first()->caminho) }}"
+                                 class="img-thumbnail"
                                  style="width:60px; height:60px; object-fit:cover;">
                         @else
                             <span class="text-muted">Sem imagem</span>

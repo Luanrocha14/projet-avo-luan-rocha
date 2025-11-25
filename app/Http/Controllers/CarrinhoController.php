@@ -15,7 +15,10 @@ class CarrinhoController extends Controller
 
     public function adicionar($id)
     {
-        $produto = Produto::findOrFail($id);
+        $produto = Produto::with('imagens')->findOrFail($id);
+
+        // Agora garantimos que a imagem vem correta
+        $imagemPrincipal = optional($produto->imagens->first())->caminho;
 
         $carrinho = session()->get('carrinho', []);
 
@@ -26,7 +29,7 @@ class CarrinhoController extends Controller
                 'id' => $produto->id,
                 'nome' => $produto->nome,
                 'preco' => $produto->preco_venda,
-                'imagem' => $produto->imagem,
+                'imagem' => $imagemPrincipal, // ← AQUI VAI O CAMINHO CERTO
                 'quantidade' => 1
             ];
         }
