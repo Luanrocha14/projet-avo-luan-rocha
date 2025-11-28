@@ -12,7 +12,9 @@ class LembreteController extends Controller
      */
     public function index()
     {
-        $lembretes = Lembrete::orderBy('data_vencimento')->paginate(5);
+        // Lembretes paginados
+        $lembretes = Lembrete::orderBy('data_vencimento', 'asc')->paginate(10);
+
         return view('lembretes.index', compact('lembretes'));
     }
 
@@ -106,6 +108,7 @@ class LembreteController extends Controller
             ->with('success', 'Conta marcada como paga com sucesso!');
     }
 
+
     /**
      * Exibe o histórico de contas pagas
      */
@@ -116,5 +119,14 @@ class LembreteController extends Controller
             ->paginate(10);
 
         return view('lembretes.pagos', compact('pagos'));
+    }
+
+    public function historico()
+    {
+        $pagos = Lembrete::where('pago', true)
+            ->orderBy('data_pagamento', 'desc')
+            ->paginate(20);
+
+        return view('lembretes.historico', compact('pagos'));
     }
 }

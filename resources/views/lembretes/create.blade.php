@@ -1,47 +1,68 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="card mt-4 mb-4 border-light shadow">
-    <div class="card-header hstack gap-2">
-        <span><i class="bi bi-plus-circle me-1"></i> Novo Lembrete</span>
-        <span class="ms-auto">
-            <a href="{{ route('lembretes.index') }}" class="btn btn-info btn-sm">
-                <i class="bi bi-list-ul me-1"></i> Listar
-            </a>
-        </span>
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-4">
+        <h2 class="fw-bold text-secondary">Novo Lembrete</h2>
+        <a href="{{ route('lembretes.index') }}" class="btn btn-outline-secondary rounded-pill px-4">
+            <i class="bi bi-arrow-left me-1"></i> Voltar para Lista
+        </a>
     </div>
 
-    <div class="card-body">
-        <x-alert />
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-5">
+            <x-alert />
 
-        <form action="{{ route('lembretes.store') }}" method="POST" class="row g-3">
-            @csrf
-            <div class="col-md-6">
-                <label class="form-label">Título</label>
-                <input type="text" name="titulo" class="form-control" required>
-            </div>
+            <form action="{{ route('lembretes.store') }}" method="POST">
+                @csrf
+                
+                <h5 class="card-title mb-4 text-muted border-bottom pb-2">Informações da Conta</h5>
 
-            <div class="col-md-6">
-                <label class="form-label">Valor (R$)</label>
-                <input type="number" name="valor" class="form-control" step="0.01" required>
-            </div>
+                <div class="row g-4">
+                    {{-- Título --}}
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <input type="text" name="titulo" class="form-control" id="floatingTitulo" placeholder="Ex: Conta de Luz" required>
+                            <label for="floatingTitulo">Título do Lembrete</label>
+                        </div>
+                    </div>
 
-            <div class="col-md-6">
-                <label class="form-label">Data de Vencimento</label>
-                <input type="date" name="data_vencimento" class="form-control" required>
-            </div>
+                    {{-- Valor --}}
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0">R$</span>
+                            <div class="form-floating flex-grow-1">
+                                <input type="number" name="valor" class="form-control border-start-0" id="floatingValor" step="0.01" placeholder="0,00" required>
+                                <label for="floatingValor">Valor</label>
+                            </div>
+                        </div>
+                    </div>
 
-            <div class="col-md-12">
-                <label class="form-label">Descrição</label>
-                <textarea name="descricao" class="form-control" rows="3"></textarea>
-            </div>
+                    {{-- Data --}}
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="date" name="data_vencimento" class="form-control" id="floatingDate" required>
+                            <label for="floatingDate">Data de Vencimento</label>
+                        </div>
+                    </div>
 
-            <div class="col-12">
-                <button type="submit" class="btn btn-success btn-sm">
-                    <i class="bi bi-check-circle me-1"></i> Salvar
-                </button>
-            </div>
-        </form>
+                    {{-- Descrição --}}
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <textarea name="descricao" class="form-control" placeholder="Detalhes" id="floatingDesc" style="height: 100px"></textarea>
+                            <label for="floatingDesc">Descrição (Opcional)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-5">
+                    <button type="reset" class="btn btn-light text-muted px-4 rounded-3">Limpar</button>
+                    <button type="submit" class="btn btn-primary px-5 rounded-3 fw-bold">
+                        <i class="bi bi-check-lg me-1"></i> Salvar Lembrete
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 @endsection

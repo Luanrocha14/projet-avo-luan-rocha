@@ -26,7 +26,7 @@ Route::delete('/destroy-user/{user}', [UserController::class, 'destroy'])->name(
 |--------------------------------------------------------------------------
 */
 
-// Listar todos
+// Listar
 Route::get('/lembretes', [LembreteController::class, 'index'])->name('lembretes.index');
 
 // Criar
@@ -43,8 +43,8 @@ Route::delete('/lembretes/{lembrete}', [LembreteController::class, 'destroy'])->
 // Pagar
 Route::put('/lembretes/{id}/pagar', [LembreteController::class, 'pagar'])->name('lembretes.pagar');
 
-// Histórico
-Route::get('/pagos', [LembreteController::class, 'pagos'])->name('lembretes.pagos');
+// Histórico (antes era pagos — renomeado)
+Route::get('/lembretes/historico', [LembreteController::class, 'pagos'])->name('lembretes.historico');
 
 /*
 |--------------------------------------------------------------------------
@@ -84,3 +84,5 @@ Route::delete('/produtos/{produto}', [ProdutoController::class, 'destroy'])->nam
 Route::get('/carrinho', [CarrinhoController::class, 'index'])->name('carrinho.index');
 Route::get('/carrinho/adicionar/{id}', [CarrinhoController::class, 'adicionar'])->name('carrinho.adicionar');
 Route::get('/carrinho/remover/{id}', [CarrinhoController::class, 'remover'])->name('carrinho.remover');
+
+Route::get('jogo-rainhas', function () { return view('/rainhas');})->name('jogo.rainhas');
