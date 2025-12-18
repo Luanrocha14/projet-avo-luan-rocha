@@ -179,7 +179,7 @@
         <div class="card-body p-0">
             <table class="table table-striped align-middle mb-0 opacity-75">
                 <tbody>
-                    @foreach ($pagos->take(5) as $pago)
+                    @foreach ($pagos->take(6) as $pago)
                         <tr>
                             <td class="px-4">{{ $pago->titulo }}</td>
                             <td>R$ {{ number_format($pago->valor, 2, ',', '.') }}</td>

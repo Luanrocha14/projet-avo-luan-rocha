@@ -5,6 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\LembreteController;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\CarrinhoController;
+use App\Http\Controllers\EventoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -86,3 +87,17 @@ Route::get('/carrinho/adicionar/{id}', [CarrinhoController::class, 'adicionar'])
 Route::get('/carrinho/remover/{id}', [CarrinhoController::class, 'remover'])->name('carrinho.remover');
 
 Route::get('jogo-rainhas', function () { return view('/rainhas');})->name('jogo.rainhas');
+
+/*
+|--------------------------------------------------------------------------
+| Rotas do Evento
+|--------------------------------------------------------------------------
+*/
+
+// Listar inscrições no evento
+Route::get('/evento', [EventoController::class, 'index'])->name('evento.index');
+
+// Criar inscrição
+Route::get('/evento/cadastro', [EventoController::class, 'create'])->name('evento.create');
+Route::post('/evento/cadastro', [EventoController::class, 'store'])->name('evento.store');
+

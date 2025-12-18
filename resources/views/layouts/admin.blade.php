@@ -28,7 +28,8 @@
         {{-- Sidebar principal --}}
         <div class="flex-shrink-0 p-3 bg-petroleo border-end" style="width: 280px; min-height: 100vh;">
 
-            <a href="{{ url('/') }}" class="d-flex align-items-center pb-3 mb-3 text-white text-decoration-none border-bottom">
+            <a href="{{ url('/') }}"
+                class="d-flex align-items-center pb-3 mb-3 text-white text-decoration-none border-bottom">
                 <svg class="bi pe-none me-2" width="30" height="24" aria-hidden="true">
                     <use xlink:href="#bootstrap"></use>
                 </svg>
@@ -45,9 +46,12 @@
                     </button>
                     <div class="collapse" id="home-collapse">
                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                            <li><a href="{{ route('user.index') }}" class="d-inline-flex text-decoration-none rounded">Usuários</a></li>
-                            <li><a href="{{ route('lembretes.index')}}" class="d-inline-flex text-decoration-none rounded">Lembretes</a></li>
-                            <li><a href="#" class="d-inline-flex text-decoration-none rounded">Configurações</a></li>
+                            <li><a href="{{ route('user.index') }}"
+                                    class="d-inline-flex text-decoration-none rounded">Usuários</a></li>
+                            <li><a href="{{ route('lembretes.index') }}"
+                                    class="d-inline-flex text-decoration-none rounded">Lembretes</a></li>
+                            <li><a href="#" class="d-inline-flex text-decoration-none rounded">Configurações</a>
+                            </li>
                         </ul>
                     </div>
                 </li>
@@ -61,7 +65,8 @@
                     <div class="collapse" id="orders-collapse">
                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                             <li><a href="#" class="d-inline-flex text-decoration-none rounded">Novos</a></li>
-                            <li><a href="#" class="d-inline-flex text-decoration-none rounded">Finalizados</a></li>
+                            <li><a href="#" class="d-inline-flex text-decoration-none rounded">Finalizados</a>
+                            </li>
                         </ul>
                     </div>
                 </li>
@@ -74,15 +79,18 @@
                     </button>
                     <div class="collapse" id="products-collapse">
                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                            <li><a href="{{ route('produtos.album') }}" class="d-inline-flex text-decoration-none rounded">Catálogo</a></li>
-                            <li><a href="{{ route('produtos.index') }}" class="d-inline-flex text-decoration-none rounded">Listar</a></li>
+                            <li><a href="{{ route('produtos.album') }}"
+                                    class="d-inline-flex text-decoration-none rounded">Catálogo</a></li>
+                            <li><a href="{{ route('produtos.index') }}"
+                                    class="d-inline-flex text-decoration-none rounded">Listar</a></li>
                         </ul>
                     </div>
                 </li>
 
                 {{-- ⬇️ NOVO MENU: CARRINHO --}}
                 <li class="mb-1">
-                    <a href="{{ route('carrinho.index') }}" class="d-inline-flex align-items-center text-decoration-none">
+                    <a href="{{ route('carrinho.index') }}"
+                        class="d-inline-flex align-items-center text-decoration-none">
                         <i class="bi bi-cart4 me-2"></i> Carrinho
                     </a>
                 </li>
@@ -91,7 +99,7 @@
 
                 {{-- Menu Clientes --}}
                 <li class="mb-1">
-                    <a href="#" class="d-inline-flex text-decoration-none align-items-center">
+                    <a href="{{ route('evento.index') }}" class="d-inline-flex text-decoration-none align-items-center">
                         <i class="bi bi-people me-2"></i> Clientes
                     </a>
                 </li>
@@ -101,13 +109,16 @@
                     <div class="dropdown">
                         <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle"
                             data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="https://github.com/mdo.png" alt="Foto do usuário" width="32" height="32" class="rounded-circle me-2">
+                            <img src="https://github.com/mdo.png" alt="Foto do usuário" width="32" height="32"
+                                class="rounded-circle me-2">
                             <strong>Admin</strong>
                         </a>
                         <ul class="dropdown-menu text-small shadow">
                             <li><a class="dropdown-item" href="#">Perfil</a></li>
                             <li><a class="dropdown-item" href="#">Configurações</a></li>
-                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
                             <li><a class="dropdown-item text-danger" href="#">Sair</a></li>
                         </ul>
                     </div>
@@ -126,4 +137,5 @@
     {{-- Bootstrap JS --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
